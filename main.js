@@ -3,6 +3,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -14,20 +15,16 @@ io.on('connection', (socket) => {
   console.log('Foydalanuvchi ulandi:', socket.id);
 
   socket.on('chat message', (msg) => {
-    io.emit('chat message', msg); // barcha foydalanuvchiga yuboriladi
+    io.emit('chat message', msg);
     console.log(msg);
-    
   });
 
   socket.on('disconnect', () => {
-    console.log('Foydalanuvchi chiqdi:',  socket.id);
-    console.log('Axmoq');
-    
+    console.log('Foydalanuvchi chiqdi:', socket.id);
   });
 });
 
-server.listen(3000, () => {
-  console.log('Server 3000-portda ishlayapti');
-  console.log('Salom');
-  
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server ${PORT}-portda ishlayapti`);
 });
