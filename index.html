@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Matrix Chat</title>
+  <style>
+    body {
+      background: black;
+      color: #00ff00;
+      font-family: monospace;
+      font-size: 16px;
+      margin: 0;
+      padding: 20px;
+    }
+    #messages {
+      list-style-type: none;
+      padding: 0;
+      height: 80vh;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      margin-bottom: 10px;
+      border: 1px solid #00ff00;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    #messages li {
+      padding: 4px 0;
+    }
+    #form {
+      display: flex;
+      width: 100%;
+    }
+    #input {
+      flex: 1;
+      background: black;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+      font-size: 16px;
+      padding: 10px;
+      font-family: monospace;
+      outline: none;
+    }
+    button {
+      background: black;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #003300;
+    }
+  </style>
+</head>
+<body>
+  <ul id="messages"></ul>
+  <form id="form">
+    <input id="input" autocomplete="off" placeholder="Xabar yozing..." />
+    <button>Yubor</button>
+  </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    let nick = prompt("Nick ismingiz:");
+    if (!nick || nick.trim() === "") nick = "YOU";
+
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (input.value.trim()) {
+        const msg = `[${nick}] >> ${input.value.trim()}`;
+        socket.emit('chat message', msg);
+        input.value = '';
+      }
+    });
+
+    socket.on('chat message', (msg) => {
+      const item = document.createElement('li');
+      item.textContent = msg;
+      messages.appendChild(item);
+      messages.scrollTop = messages.scrollHeight;
+    });
+  </script>
+</body>
+</html>
